@@ -14,8 +14,19 @@ class Makefile(object):
             if line.find(':') == -1:
                 continue
             line = line.split(':')
-            #LEFT OFF HERE
-            # get rid of tabs and split a line into a list of vertices
+            target = line[0]
+            line[1] = line.strip('\t')
+            sources = line[1].split(' ')
+           
+            #LEFT OFF HERE 
+            if graph.degrees
+            graph.degrees[target] += len(sources)
+            for src in sources:
+                if src not in graph.edges
+                    graph.edges[src] = [target]
+                else
+                    graph.edges[src].append(target)
+            
             # compilation line right after
             actions[line[0]] = lines[line_num + 1]
         
