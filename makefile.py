@@ -7,6 +7,7 @@ class Makefile(object):
         self.file_name = file_name
         self.tg = tg
         self.graph = Graph()
+        self.targets = {}
         self.actions = {}
         self.variables = {}
 
@@ -15,7 +16,7 @@ class Makefile(object):
         self.build_graph()
         results = self.graph.topological_sort()
         
-        print(results)
+        #print(results)
         for result in results:
             if result in self.actions:
                 commands = self.actions[result]
@@ -24,8 +25,30 @@ class Makefile(object):
                     os.system(cmd)
     
     def build_graph(self):
-        pass
-
+        path = [self.tg]
+        for t in path:
+            if t in self.targets:
+                sources = self.targets[t]
+                # update the degrees dictionary for the target
+                if t in self.graph.degrees:
+                    self.graph.degrees[t] += len(sources)
+                else:
+                    self.graph.degrees[t] = len(sources)
+               
+                if t not in self.graph.edges:
+                    self.graph.edges[t] = []
+ 
+                # updates path, and  degrees and edges dictionaries for sources
+                for src in sources:
+                    if src not in path:
+                        path.append(src)
+                    if src not in self.graph.degrees:
+                        self.graph.degrees[src] = 0
+                    if src not in self.graph.edges:
+                        self.graph.edges[src] = [t]
+                    else:
+                        self.graph.edges[src].append(target)
+      
     def parse_makefile(self):
         with open(self.file_name) as f:
             lines = f.read().splitlines()
@@ -50,7 +73,7 @@ class Makefile(object):
                 continue
 
             line = line.split(':')
-            # target is the variable that preceds the :
+            # target is the variable that precedes the :
             target = line[0]
             # if no command line target was specified, make default the first
             if not self.tg:
@@ -59,24 +82,7 @@ class Makefile(object):
             line[1] = line[1].strip('\t')
             # sources are the variables after the :
             sources = line[1].split()
-
-            # update the degrees dictionary for the target
-            if target in self.graph.degrees:
-                self.graph.degrees[target] += len(sources)
-            else:
-                self.graph.degrees[target] = len(sources)
-
-            if target not in self.graph.edges:
-                self.graph.edges[target] = []
-
-            # updates degrees and edges dictionaries for sources
-            for src in sources:
-                if src not in self.graph.degrees:
-                    self.graph.degrees[src] = 0
-                if src not in self.graph.edges:
-                    self.graph.edges[src] = [target]
-                else:
-                    self.graph.edges[src].append(target)
+            self.targets[target] = sources
 
             # places commands in actions dictionary with target as key
             if target not in self.actions:

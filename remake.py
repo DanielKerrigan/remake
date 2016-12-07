@@ -42,6 +42,9 @@ def main():
             error('Makefile not found.')
 
     mkfile = Makefile(file_name, args.target)
+    #mkfile.parse_makefile()
+    #mkfile.build_graph()
+    #print(mkfile.graph.edges)
     mkfile.run_makefile()
 
 
