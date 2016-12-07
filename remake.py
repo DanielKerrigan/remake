@@ -36,9 +36,8 @@ def main():
 
     mkfile = Makefile(file_name)
     mkfile.parse_makefile()
-    #print(mkfile.graph.edges)
-    print(mkfile.graph.topological_sort())
-    print(mkfile.actions)
+    results = mkfile.graph.topological_sort()
+    mkfile.run_makefile(results)
             
 if __name__ == '__main__':
     main()
