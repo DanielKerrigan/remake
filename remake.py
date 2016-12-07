@@ -1,18 +1,25 @@
+#!/usr/bin/env python2.7
+
 from __future__ import print_function
 from makefile import Makefile
 import argparse
 import os
 import sys
 
+
 def read_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', type=str, help='makefile to use')
+    parser.add_argument('target', nargs='?',
+                        help='target in the makefile to run')
     args = parser.parse_args()
     return args
+
 
 def error(msg):
     print('Error: {}'.format(msg), file=sys.stderr)
     sys.exit(1)
+
 
 def main():
     args = read_arguments()
@@ -34,10 +41,11 @@ def main():
         if not file_name:
             error('Makefile not found.')
 
-    mkfile = Makefile(file_name)
+    mkfile = Makefile(file_name, args.target)
     mkfile.parse_makefile()
     results = mkfile.graph.topological_sort()
     mkfile.run_makefile(results)
-            
+
+
 if __name__ == '__main__':
     main()

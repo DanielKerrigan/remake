@@ -1,9 +1,11 @@
-CXX=		g++
+# Comment
+CXX=		g++ # Comment
 CXXFLAGS=	-g -Wall -std=gnu++11
-SHELL=		bash
-MEASURE=	../common/measure
 
+#all: 		comment
 all:		solution
 
 solution:	solution.cpp
-	g++ solution.cpp -g -Wall -std=gnu++11 -o solution
+	$(CXX) solution.cpp $(CXXFLAGS) -o solution
+	touch test.xyz
+	# touch abc.xyz
