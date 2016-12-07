@@ -3,20 +3,28 @@ import os
 
 
 class Makefile(object):
-    def __init__(self, file_name, target):
+    def __init__(self, file_name, tg):
         self.file_name = file_name
-        self.target = target
+        self.tg = tg
         self.graph = Graph()
         self.actions = {}
         self.variables = {}
 
-    def run_makefile(self, results):
+    def run_makefile(self):
+        self.parse_makefile()
+        self.build_graph()
+        results = self.graph.topological_sort()
+        
+        print(results)
         for result in results:
             if result in self.actions:
                 commands = self.actions[result]
                 for cmd in commands:
                     print(cmd)
                     os.system(cmd)
+    
+    def build_graph(self):
+        pass
 
     def parse_makefile(self):
         with open(self.file_name) as f:
@@ -44,6 +52,10 @@ class Makefile(object):
             line = line.split(':')
             # target is the variable that preceds the :
             target = line[0]
+            # if no command line target was specified, make default the first
+            if not self.tg:
+                self.tg = target
+
             line[1] = line[1].strip('\t')
             # sources are the variables after the :
             sources = line[1].split()

@@ -42,9 +42,7 @@ def main():
             error('Makefile not found.')
 
     mkfile = Makefile(file_name, args.target)
-    mkfile.parse_makefile()
-    results = mkfile.graph.topological_sort()
-    mkfile.run_makefile(results)
+    mkfile.run_makefile()
 
 
 if __name__ == '__main__':
