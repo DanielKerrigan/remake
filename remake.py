@@ -33,6 +33,12 @@ def main():
         # quit if no makefile was found
         if not file_name:
             error('Makefile not found.')
+
+    mkfile = Makefile(file_name)
+    mkfile.parse_makefile()
+    #print(mkfile.graph.edges)
+    print(mkfile.graph.topological_sort())
+    print(mkfile.actions)
             
 if __name__ == '__main__':
     main()

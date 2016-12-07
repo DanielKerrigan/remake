@@ -8,7 +8,8 @@ class Makefile(object):
 
     def parse_makefile(self):
         # only handles dependencies for now
-        lines = self.file_name.read().splitlines()
+        with open(self.file_name) as f:
+          lines = f.read().splitlines()
 
         # enumerate returns a tuple with the index as well as the content
         for line_num, line in enumerate(lines):
@@ -24,15 +25,19 @@ class Makefile(object):
             # update the degrees dictionary for the target 
             if target in self.graph.degrees:
                 self.graph.degrees[target] += len(sources)
-            else
+            else:
                 self.graph.degrees[target] = len(sources)
+        
+            if target not in self.graph.edges:
+                self.graph.edges[target] = []
+
             # updates degrees and edges dictionaries for sources
             for src in sources:
-                if src not in graph.degrees:
+                if src not in self.graph.degrees:
                     self.graph.degrees[src] = 0
-                if src not in graph.edges
+                if src not in self.graph.edges:
                     self.graph.edges[src] = [target]
-                else
+                else:
                     self.graph.edges[src].append(target)
             
             # places compilation line in actions dictionary with target as key
