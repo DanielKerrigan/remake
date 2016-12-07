@@ -1,10 +1,17 @@
 from graph import Graph
+import os
 
 class Makefile(object):
     def __init__(self, file_name):
         self.file_name = file_name
         self.graph = Graph()
-        self.actions = {}        
+        self.actions = {} 
+
+    def run_makefile(self, results):
+        for result in results:
+            if result in self.actions:
+                os.system(self.actions[result])
+                print self.actions[result]
 
     def parse_makefile(self):
         # only handles dependencies for now
@@ -41,5 +48,6 @@ class Makefile(object):
                     self.graph.edges[src].append(target)
             
             # places compilation line in actions dictionary with target as key
-            self.actions[target] = lines[line_num + 1]
+            if lines[line_num + 1]:
+                self.actions[target] = lines[line_num + 1].strip(' \t')
         
