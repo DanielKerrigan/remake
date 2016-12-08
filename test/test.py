@@ -36,7 +36,7 @@ class TestTopologicalSort(unittest.TestCase):
 class TestMakefile(unittest.TestCase):
 
     def test_output_make_all(self):
-        print(os.getcwd())
+        #print(os.getcwd())
         mf = Makefile(os.path.join(os.getcwd(), 'test/test_1/Makefile'),
                       '', True)
         mf.run_makefile()

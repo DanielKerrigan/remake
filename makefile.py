@@ -1,12 +1,12 @@
 from graph import Graph
 from collections import deque
 import os
-import commands
 
 
 class Makefile(object):
     def __init__(self, file_name, start_target, just_print=False):
         self.file_name = file_name
+        # Ex. if you do `remake.py clean`, then clean is the start target
         self.start_target = start_target
         self.graph = Graph()
         # map from target to sources
@@ -19,68 +19,39 @@ class Makefile(object):
         # store the output for testing
         self.output = []
 
-    def substitute_variables(self, cmd):
-        cmd = [self.variables.get(w, w) for w in cmd.split()]
-        return cmd
-
     def run_makefile(self):
         self.parse_makefile()
         self.build_graph()
         results = self.graph.topological_sort()
+        update = self.need_make(results)
 
-        # we'll call this the 'make clean' fix
-        if results[0] in self.sources and not self.graph.degrees[results[0]]:
-            update = results
-        else:
-            update = self.need_make(results)
-
-        for result in update:
-            if result in self.actions:
+        for result in results:
+            if result in self.actions and result in update:
                 commands = self.actions[result]
                 for cmd in commands:
                     print(cmd)
                     self.output.append(cmd)
                     if not self.just_print:
                         os.system(cmd)
-            for parent in self.graph.edges[result]:
-                if parent not in update:
-                    update.append(parent)
-
-        """for result in results:
-            if result in self.actions:
-                commands = self.actions[result]
-                for cmd in commands:
-                    print(cmd)
-                    self.output.append(cmd)
-                    if not self.just_print:
-                        os.system(cmd)"""
 
     def need_make(self, results):
-        #print(results)
-        update = []
+        update = set()
         for node in results:
-            # only add nodes on the same level as the first node added
-            if update:
-                if self.graph.degrees[update[0]] < self.graph.degrees[node]:
-                    continue
+            if node in self.sources and not self.sources[node]:
+                update.add(node)
             for edge in self.graph.edges[node]:
-                if self.time_stamp(node) <= self.time_stamp(edge): 
-                    if node not in update:
-                        update.append(node)
+                if (self.time_stamp(node) > self.time_stamp(edge) or
+                        node in update):
+                    update.add(edge)
         return update
 
-
+    # get modification time
     def time_stamp(self, node):
-        failure = 'ls:'
-        time = commands.getstatusoutput("ls -l '" + node + "' | grep -Poh '[0-9][0-9].[0-9][0-9].[a-zA-Z]+.[a-zA-Z]+$' | grep -oh '[0-9]\{2\}.[0-9]\{2\}'")[1]
-        # use sed s/:/./g to put . in place of semi-colon
-        # convert string to float
-        # if file hasn't been created
-        #print(node + ': ' + time)
-        if failure in time:
-            return 0
-        else:
-            return time
+        try:
+            time = os.path.getmtime(node)
+        except OSError as e:
+            time = 0
+        return time
 
     # build graph that reverses targets/sources. compute degrees.
     # perform BFS starting from the starting target
@@ -117,6 +88,11 @@ class Makefile(object):
 
     # parse the makefiles to get the targets and their sources
     def parse_makefile(self):
+        def substitute_variables(line):
+            line = [self.variables.get(w, w) for w in line.split()]
+            line = ' '.join(line)
+            return line
+
         with open(self.file_name) as f:
             lines = f.read().splitlines()
 
@@ -128,6 +104,9 @@ class Makefile(object):
 
             # remove comments
             line = line.split('#')[0]
+            # substitute variables
+            line = substitute_variables(line)
+
             # parse variable
             if '=' in line:
                 line = line.split('=', 1)
@@ -147,7 +126,7 @@ class Makefile(object):
                 self.start_target = target
 
             # sources are after the :
-            srcs = self.substitute_variables(line[1].strip('\t'))
+            srcs = line[1].strip('\t').split()
             self.sources[target] = srcs
 
             # places commands in actions dictionary with target as key
@@ -157,8 +136,6 @@ class Makefile(object):
                 # trim whitespace
                 cmd = lines[line_num].strip(' \t')
                 if cmd:
-                    # substitute variables for their values
-                    cmd = self.substitute_variables(cmd)
-                    cmd = ' '.join(cmd)
+                    cmd = substitute_variables(cmd)
                     self.actions[target].append(cmd)
                 line_num += 1
