@@ -3,29 +3,26 @@ import os
 
 
 class Makefile(object):
-    def __init__(self, file_name, tg):
+    def __init__(self, file_name, tg, just_print):
         self.file_name = file_name
         self.tg = tg
         self.graph = Graph()
         self.actions = {}
         self.variables = {}
+        self.just_print = just_print
 
     def run_makefile(self):
         self.parse_makefile()
-        self.build_graph()
-        results = self.graph.topological_sort()
+        results = self.graph.topological_sort(tg)
         
-        print(results)
         for result in results:
             if result in self.actions:
                 commands = self.actions[result]
                 for cmd in commands:
                     print(cmd)
-                    os.system(cmd)
+                    if not self.just_print:
+                        os.system(cmd)
     
-    def build_graph(self):
-        pass
-
     def parse_makefile(self):
         with open(self.file_name) as f:
             lines = f.read().splitlines()

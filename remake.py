@@ -10,6 +10,8 @@ import sys
 def read_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', type=str, help='makefile to use')
+    parser.add_argument('-n', '--just-print', action='store_true',
+                        help='Just print the commands instead of executing them.')
     parser.add_argument('target', nargs='?',
                         help='target in the makefile to run')
     args = parser.parse_args()
@@ -41,7 +43,7 @@ def main():
         if not file_name:
             error('Makefile not found.')
 
-    mkfile = Makefile(file_name, args.target)
+    mkfile = Makefile(file_name, args.target, args.just_print)
     mkfile.run_makefile()
 
 
