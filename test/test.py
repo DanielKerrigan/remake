@@ -34,26 +34,26 @@ class TestTopologicalSort(unittest.TestCase):
 
 
 class TestMakefile(unittest.TestCase):
+ 
+    @classmethod
+    def setUpClass(cls):
+        os.chdir('test/test_1')
 
     def test_output_make_all(self):
-        #print(os.getcwd())
-        mf = Makefile(os.path.join(os.getcwd(), 'test/test_1/Makefile'),
-                      '', True)
+        mf = Makefile('Makefile', '', True)
         mf.run_makefile()
         correct = ['g++ solution.cpp -g -Wall -std=gnu++11 -o solution',
                    'touch test.xyz']
         self.assertEqual(mf.output, correct)
 
     def test_output_make_clean(self):
-        mf = Makefile(os.path.join(os.getcwd(), 'test/test_1/Makefile'),
-                      'clean', True)
+        mf = Makefile('Makefile', 'clean', True)
         mf.run_makefile()
         correct = ['rm solution test.xyz']
         self.assertEqual(mf.output, correct)
 
     def test_output_make_solution_cpp(self):
-        mf = Makefile(os.path.join(os.getcwd(), 'test/test_1/Makefile'),
-                      'solution', True)
+        mf = Makefile('Makefile', 'solution', True)
         mf.run_makefile()
         correct = ['g++ solution.cpp -g -Wall -std=gnu++11 -o solution',
                    'touch test.xyz']
