@@ -1,6 +1,7 @@
 from graph import Graph
 from collections import deque
 import os
+import commands
 
 
 class Makefile(object):
@@ -27,7 +28,13 @@ class Makefile(object):
         self.build_graph()
         results = self.graph.topological_sort()
 
-        for result in results:
+        # we'll call this the 'make clean' fix
+        if results[0] in self.sources and not self.graph.degrees[results[0]]:
+            update = results
+        else:
+            update = self.need_make(results)
+
+        for result in update:
             if result in self.actions:
                 commands = self.actions[result]
                 for cmd in commands:
@@ -35,6 +42,45 @@ class Makefile(object):
                     self.output.append(cmd)
                     if not self.just_print:
                         os.system(cmd)
+            for parent in self.graph.edges[result]:
+                if parent not in update:
+                    update.append(parent)
+
+        """for result in results:
+            if result in self.actions:
+                commands = self.actions[result]
+                for cmd in commands:
+                    print(cmd)
+                    self.output.append(cmd)
+                    if not self.just_print:
+                        os.system(cmd)"""
+
+    def need_make(self, results):
+        #print(results)
+        update = []
+        for node in results:
+            # only add nodes on the same level as the first node added
+            if update:
+                if self.graph.degrees[update[0]] < self.graph.degrees[node]:
+                    continue
+            for edge in self.graph.edges[node]:
+                if self.time_stamp(node) <= self.time_stamp(edge): 
+                    if node not in update:
+                        update.append(node)
+        return update
+
+
+    def time_stamp(self, node):
+        failure = 'ls:'
+        time = commands.getstatusoutput("ls -l '" + node + "' | grep -Poh '[0-9][0-9].[0-9][0-9].[a-zA-Z]+.[a-zA-Z]+$' | grep -oh '[0-9]\{2\}.[0-9]\{2\}'")[1]
+        # use sed s/:/./g to put . in place of semi-colon
+        # convert string to float
+        # if file hasn't been created
+        #print(node + ': ' + time)
+        if failure in time:
+            return 0
+        else:
+            return time
 
     # build graph that reverses targets/sources. compute degrees.
     # perform BFS starting from the starting target
