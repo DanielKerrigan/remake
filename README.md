@@ -1,6 +1,6 @@
 # ReMake [![Build Status](https://travis-ci.org/DanielKerrigan/remake.svg?branch=master)](https://travis-ci.org/DanielKerrigan/remake)
 
-ReMake implements a subset of Make in Python.
+ReMake implements a subset of Make in Python 2.7
 
 [Presentation](https://docs.google.com/a/nd.edu/presentation/d/1BBh9ergSZrSZWGNQKGSLtV7IUI77WEMpclgCcRdtVII/edit?usp=sharing)
 
@@ -8,7 +8,7 @@ ReMake implements a subset of Make in Python.
 
 ## Usage
 
-First, clone the respository. Our project does not require any additional installs from pip so our requirements.txt is blank. remake.py is the file that should be run by the user. graph.py and makefile.py contain classes used in the implementation, but are not to be run by the user.To be able to run it anywhere, you can add the remake directory to your path. For example, in csh you can run `setenv PATH PATH_TO_REMAKE_DIRECTORY\:$PATH`.
+First, clone the respository. Our project does not require any additional installs from pip so the requirements.txt is blank. remake.py is the file that should be run by the user. graph.py and makefile.py contain classes used in the implementation, but are not to be run by the user. To be able to run remake.py anywhere, you can add the remake directory to your path. For example, in csh you can run `setenv PATH PATH_TO_REMAKE_DIRECTORY\:$PATH`.
 
 Here is the usage function for remake.py:
 
@@ -24,7 +24,7 @@ optional arguments:
   -n, --just-print      Don't run commands. Only print them.
 ```
 
-For example, if you go to a directory with a Makefile then running `remake.py` is similar to running `make`. If there are multiple Makefiles in a given directory then you can specify the file which you desire to use by running, for example, `remake.py -f Makefile-1`.
+For example, if you go to a directory with a Makefile, then running `remake.py` is similar to running `make`. If there are multiple Makefiles in a given directory then you can specify the file which you desire to use by running, for example, `remake.py -f Makefile-1`.
 
 ## Features
 
