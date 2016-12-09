@@ -5,9 +5,9 @@ g++ measure.cpp -o measure
 
 printf "|        N      |ReMake Time (s)| Make Time (s) |ReMake Mem (MB)| Make Mem (MB) |\n"
 printf "|---------------|---------------|---------------|---------------|---------------|\n"
-for i in 10 100 1000 10000 100000 1000000; do
-    m_o=`./measure /usr/bin/make -n -f makefile-$i a1` 
-    rm_o=`./measure ../remake.py -n -f makefile-$i a1`
+for i in 1 10 100 1000 10000; do
+    m_o=`./measure /usr/bin/make -f makefile-$i a1` 
+    rm_o=`./measure ../remake.py -f makefile-$i a1`
     m_o=`echo "$m_o" | grep seconds`
     rm_o=`echo "$rm_o" | grep seconds`
     m_t=`echo "$m_o" | cut -d ' ' -f 1`
