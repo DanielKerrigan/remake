@@ -34,11 +34,11 @@ class TestTopologicalSort(unittest.TestCase):
 
 
 class TestMakefile1(unittest.TestCase):
- 
+
     @classmethod
     def setUpClass(cls):
         os.chdir('test/test_1')
-    
+
     @classmethod
     def tearDownClass(self):
         # returns to original directory after tests are run
@@ -64,6 +64,7 @@ class TestMakefile1(unittest.TestCase):
                    'touch test.xyz']
         self.assertEqual(mf.output, correct)
 
+
 class TestMakeFile2(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -79,13 +80,12 @@ class TestMakeFile2(unittest.TestCase):
         mf = Makefile('Makefile', 'clean', False)
         mf.run_makefile()
 
-
     def test_output_make_all(self):
         mf = Makefile('Makefile', '', True)
         mf.run_makefile()
-        correct = [ 'gcc -std=gnu99 -Wall -c -o hello.o hello.c',
-                    'gcc -std=gnu99 -Wall -c -o main.o main.c',
-                    'gcc -o hello main.o hello.o']
+        correct = ['gcc -std=gnu99 -Wall -c -o hello.o hello.c',
+                   'gcc -std=gnu99 -Wall -c -o main.o main.c',
+                   'gcc -o hello main.o hello.o']
         self.assertEqual(mf.output, correct)
 
     def test_output_make_clean(self):
@@ -104,7 +104,6 @@ class TestMakeFile2(unittest.TestCase):
         correct = []
         self.assertEqual(mf2.output, correct)
 
-
     # checks that changed files are recompiled
     def test_output_make_clean_make(self):
         mf = Makefile('Makefile', '', False)
@@ -113,7 +112,7 @@ class TestMakeFile2(unittest.TestCase):
         mf2.run_makefile()
         mf3 = Makefile('Makefile', '', True)
         mf3.run_makefile()
-        correct = [ 'gcc -std=gnu99 -Wall -c -o hello.o hello.c',
-                    'gcc -std=gnu99 -Wall -c -o main.o main.c',
-                    'gcc -o hello main.o hello.o']
+        correct = ['gcc -std=gnu99 -Wall -c -o hello.o hello.c',
+                   'gcc -std=gnu99 -Wall -c -o main.o main.c',
+                   'gcc -o hello main.o hello.o']
         self.assertEqual(mf3.output, correct)
