@@ -1,8 +1,9 @@
 ### Group Members
-Daniel Kerrigan - dkerriga
+
+Daniel Kerrigan - dkerriga.
+
 Royce Branning - rbrannin
 
 ### Contributions
-Dan: 50%
-Royce: 50%
-Krumdick: 0%
+
+Royce wrote most of graph.py. Dan wrote most of remake.py and did the benchmarking. Royce and Dan both worked on makefile.py and testing.
