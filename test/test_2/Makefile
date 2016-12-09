@@ -1,4 +1,4 @@
-CXX=		gcc # Comment
+CXX=		gcc 
 CXXFLAGS=	-std=gnu99 -Wall
 
 

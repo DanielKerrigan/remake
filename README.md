@@ -8,7 +8,33 @@ ReMake implements a subset of Make in Python.
 
 ## Usage
 
-First, clone the respository. remake.py is the file that should be run by the user. graph.py and makefile.py contain classes used in the implementation, but are not to be run by the user.To be able to run it anywhere, you can add the remake directory to your path. For example, in csh you can run `setenv PATH PATH_TO_REMAKE_DIRECTORY\:$PATH`.
+First, clone the respository. Our project does not require any additional installs from pip so our requirements.txt is blank. remake.py is the file that should be run by the user. graph.py and makefile.py contain classes used in the implementation, but are not to be run by the user.To be able to run it anywhere, you can add the remake directory to your path. For example, in csh you can run `setenv PATH PATH_TO_REMAKE_DIRECTORY\:$PATH`.
+
+Here is the usage function for remake.py:
+
+```
+usage: remake.py [-h] [-f FILE] [-n] [target]
+
+positional arguments:
+  target                target in the makefile to run
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  makefile to use
+  -n, --just-print      Don't run commands. Only print them.
+```
+
+For example, if you go to a directory with a Makefile then running `remake.py` is similar to running `make`. If there are multiple Makefiles in a given directory then you can specify the file which you desire to use by running, for example, `remake.py -f Makefile-1`.
+
+## Features
+
+1. Correct build order and cycle detection
+2. Commands are only executed when needed
+3. Basic variables. For example: `CXX = gcc`
+4. # Comments
+5. Specific targets. For example: `remake.py clean` or `remake.py target`
+
+For a reference to Makefile syntax support, see test/test_2/Makefile. This is a modified makefile from Unix class.
 
 ## Benchmarks
 
@@ -60,3 +86,8 @@ a10:
 ## Testing
 
 Tests are performed using Python's unittest framework. Travis CI is used so that the tests are run when commits are pushed. test/test_1 and test/test_2 contain Makefiles and example projects. test/test.py contains the test code. There are tests for both topological sort and Makefile execution.
+
+To run the tests execute the following command from the remake folder:
+``python -m unittest discover test``
+
+
