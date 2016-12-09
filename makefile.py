@@ -1,6 +1,8 @@
+from __future__ import print_function
 from graph import Graph
 from collections import deque
 import os
+import sys
 
 
 class Makefile(object):
@@ -22,7 +24,11 @@ class Makefile(object):
     def run_makefile(self):
         self.parse_makefile()
         self.build_graph()
-        results = self.graph.topological_sort()
+        try:
+            results = self.graph.topological_sort()
+        except RuntimeError as e:
+            print('Error: {}'.format(e.args[0], file=sys.stderr))
+            sys.exit(1)
         update = self.need_make(results)
 
         for result in results:
@@ -34,6 +40,7 @@ class Makefile(object):
                     if not self.just_print:
                         os.system(cmd)
 
+    # returns a set containing dependencies needing to be made
     def need_make(self, results):
         update = set()
         for node in results:

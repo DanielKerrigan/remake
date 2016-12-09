@@ -20,4 +20,8 @@ class Graph(object):
                 self.degrees[u] -= 1
                 if self.degrees[u] == 0:
                     frontier.append(u)
+
+        if len(results) < len(self.degrees):
+            raise RuntimeError('Graph has cycles.')
+
         return results

@@ -6,10 +6,10 @@ from makefile import Makefile
 
 class TestTopologicalSort(unittest.TestCase):
 
-    def test_sort(self):
-        graph = Graph()
+    def setUp(self):
+        self.graph = Graph()
 
-        graph.edges = {
+        self.graph.edges = {
             'library.c': ['library.o'],
             'library.h': ['library.o', 'main.o'],
             'main.c': ['main.o'],
@@ -18,7 +18,7 @@ class TestTopologicalSort(unittest.TestCase):
             'program': []
         }
 
-        graph.degrees = {
+        self.graph.degrees = {
             'library.c': 0,
             'library.h': 0,
             'main.c': 0,
@@ -27,10 +27,18 @@ class TestTopologicalSort(unittest.TestCase):
             'program': 2
         }
 
-        results = graph.topological_sort()
+    def test_sort(self):
+        results = self.graph.topological_sort()
         correct = ['library.c', 'main.c', 'library.h',
                    'library.o', 'main.o', 'program']
         self.assertEqual(results, correct)
+
+    def test_cycle(self):
+        # add cycle to the graph
+        self.graph.edges['main.o'].append('main.c')
+        self.graph.degrees['main.c'] += 1
+        with self.assertRaises(RuntimeError):
+            self.graph.topological_sort()
 
 
 class TestMakefile1(unittest.TestCase):
@@ -63,6 +71,12 @@ class TestMakefile1(unittest.TestCase):
         correct = ['g++ solution.cpp -g -Wall -std=gnu++11 -o solution',
                    'touch test.xyz']
         self.assertEqual(mf.output, correct)
+
+    def test_cycle(self):
+        mf = Makefile('Makefile', 'cycle', True)
+        # sys.exit should be called
+        with self.assertRaises(SystemExit):
+            mf.run_makefile()
 
 
 class TestMakeFile2(unittest.TestCase):
